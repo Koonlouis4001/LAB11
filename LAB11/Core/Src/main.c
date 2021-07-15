@@ -130,6 +130,7 @@ int main(void)
   EEPROMReadExample(eepromDataReadBack);
   HAL_Delay(100);
   lastDataReadBack = eepromDataReadBack[0];
+  IOExpdrDataReadBack = eepromDataReadBack[0];
   IOExpenderWritePinB(eepromDataReadBack[0]);
   /* USER CODE END 2 */
 
@@ -145,12 +146,14 @@ int main(void)
 			{
 				IOExpenderReadPinA(&IOExpdrDataReadBack);
 				number += 1;
+				HAL_Delay(10);
 			}
 			else if(hi2c1.State == HAL_I2C_STATE_READY && number == 1)
 			{
 				IOExpdrDataReadBack = (IOExpdrDataReadBack << 4) | 0b00001111;
 				IOExpenderWritePinB(IOExpdrDataReadBack);
 				number += 1;
+				HAL_Delay(10);
 			}
 			else if(hi2c1.State == HAL_I2C_STATE_READY && number == 2)
 			{
@@ -159,13 +162,15 @@ int main(void)
 					lastDataReadBack = IOExpdrDataReadBack;
 					EEPROMWriteExample(IOExpdrDataReadBack);
 					count += 1;
-					number += 1;
+					HAL_Delay(10);
 				}
+				number += 1;
 			}
 			else if(hi2c1.State == HAL_I2C_STATE_READY && number == 3)
 			{
 				EEPROMReadExample(eepromDataReadBack);
 				number = 0;
+				HAL_Delay(10);
 			}
 			User_Button[1] = User_Button[0];
 		}
@@ -198,9 +203,9 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
-  RCC_OscInitStruct.PLL.PLLM = 16;
-  RCC_OscInitStruct.PLL.PLLN = 336;
-  RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV4;
+  RCC_OscInitStruct.PLL.PLLM = 8;
+  RCC_OscInitStruct.PLL.PLLN = 100;
+  RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
   RCC_OscInitStruct.PLL.PLLQ = 4;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
   {
@@ -215,7 +220,7 @@ void SystemClock_Config(void)
   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
 
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2) != HAL_OK)
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_3) != HAL_OK)
   {
     Error_Handler();
   }
